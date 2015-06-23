@@ -2,11 +2,11 @@ angular.module('Params',['Super'])
 .factory('params',function(Base64){
     var protAuth = 'http://';
     var protAPI = 'https://';
-    var keyAPI='otheelledwoureturingenev';
-    var passAPI='SUO4sj5g1SARJpUUvTmWtrXK';
-    var dbServer = 'superdemos.cloudant.com/superkiosko';
-    var urlAPI = 'superkiosko.supermio.com/_all_docs';
-    var dbName ='superkiosko';
+    var keyAPI='akedowermightfuldsolveri';
+    var passAPI='klhcQg0JDiAcUhdMDaFOEjDu';
+    var dbServer = 'superdemos.cloudant.com/supershopper';
+    var urlAPI = 'supershopper.supermio.com/_all_docs';
+    var dbName ='supershopper';
     var dbTimeOut = '30000';
     var dbInserts = 0;
 

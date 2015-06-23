@@ -23,53 +23,6 @@ angular.module('controller',['ngCordova','services','app','Super'])
     this.accion = 'Capturando...';
     this.mac = '';
 
-    this.capturar = function(){
-        if (this.capturando) {
-            this.butonText = 'Iniciar Captura';
-            this.capturando = false;
-            //watch.clearWatch();
-            $cordovaBackgroundGeolocation.stop();
-        } else {
-            this.butonText = 'Detener Captura';
-            this.capturando = true;
-
-            var watchOptions = {
-                frequency : this.freq,
-                timeout : 3000,
-                enableHighAccuracy : false
-            };
-            var posOptions = {
-                timeout: 3000,
-                enableHighAccuracy : false
-            };
-            var backOptions = {
-                url: 'http://localhost',
-                notificationTitle: 'SuperGPS tracking',
-                notificationText: 'Activo',
-                debug: true,
-                stopOnTerminate: true
-            }
-
-            $cordovaBackgroundGeolocation.configure(backOptions)
-            .then(
-                null,
-                function (err){ console.log(err)},
-                function (location){
-                    console.log('Posición capturada!');
-                    $scope.posicion.lat = Equipo.setLat(position.location.latitude);
-                    $scope.posicion.lon = Equipo.setLon(position.location.longitude);
-                    $scope.posicion.pres = Equipo.setPres(position.location.accuracy);
-                    $scope.posicion.fecha = Equipo.getFecha();
-                    $scope.posicion.bateria = Equipo.getBateria();
-                    $scope.posicion.mac = Equipo.getMac();
-                    console.log('la bateria es: '+Equipo.getBateria());
-                    Equipo.save();
-                }
-            );
-
-        }
-    };
-
     $ionicPlatform.ready(function(){
         Equipo.initData();
         var platform = ionic.Platform.platform();

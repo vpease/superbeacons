@@ -74,29 +74,6 @@ angular.module('services',['ngCordova','db'])
     }
 })
 .factory('data',function($q,DB){
-    var papers =[
-        {_id: '1', tipo:'paper',avatar:'elcomercio.png',nombre: 'El Comercio'},
-        {_id: '2', tipo:'paper',avatar:'peru21.png',nombre: 'Perú 21'},
-        {_id: '3', tipo:'paper',avatar:'gestion.png',nombre: 'Gestion'},
-        {_id: '4', tipo:'paper',avatar:'depor.png',nombre: 'Depor'},
-        {_id: '5', tipo:'paper',avatar:'trome.png',nombre: 'Trome'},
-        {_id: '6', tipo:'paper',avatar:'larepublica.png',nombre: 'La República'},
-        {_id: '7', tipo:'paper',avatar:'larazon.png',nombre: 'La Razón'},
-        {_id: '8', tipo:'paper',avatar:'expreso.png',nombre: 'Expreso'},
-        {_id: '9', tipo:'paper',avatar:'exitosa.png',nombre: 'Exitosa'},
-        {_id: '10', tipo:'paper',avatar:'ojo.png',nombre: 'Ojo'},
-        {_id: '11', tipo:'paper',avatar:'elmen.png',nombre: 'El Men'},
-        {_id: '12', tipo:'paper',avatar:'elperuano.png',nombre: 'El Peruano'},
-        {_id: '13', tipo:'paper',avatar:'elpopular.png',nombre: 'El Popular'},
-        {_id: '14', tipo:'paper',avatar:'laprimera.png',nombre: 'La Primera'},
-        {_id: '15', tipo:'paper',avatar:'diario16.png',nombre: 'Diario 16'},
-        {_id: '16', tipo:'paper',avatar:'elbocon.png',nombre: 'El Bocon'},
-        {_id: '17', tipo:'paper',avatar:'todosport.png',nombre: 'Todo Sport'},
-        {_id: '18', tipo:'paper',avatar:'libero.png',nombre: 'Libero'},
-        {_id: '19', tipo:'paper',avatar:'delpais.png',nombre: 'Del País'},
-        {_id: '20', tipo:'paper',avatar:'correo.png',nombre: 'Correo'},
-        {_id: '21', tipo:'paper',avatar:'elchino.png',nombre: 'El Chino'}
-    ];
     return {
         init: function(){
             DB.init();
@@ -106,11 +83,6 @@ angular.module('services',['ngCordova','db'])
         },
         put: function(object){
             DB.put(object);
-        },
-        getPapers: function(){
-            var dfd = $q.defer();
-            dfd.resolve(papers);
-            return dfd.promise;
         }
     };
 })

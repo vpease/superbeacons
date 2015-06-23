@@ -20,7 +20,15 @@
     "cordova-plugin-whitelist",
     "cordova-plugin-splashscreen",
     "com.ionic.keyboard",
-    "com.unarin.cordova.beacon"
+    "com.unarin.cordova.beacon",
+    {
+      "locator": "https://github.com/apache/cordova-plugin-geolocation",
+      "id": "cordova-plugin-geolocation"
+    },
+    {
+      "locator": "https://github.com/katzer/cordova-plugin-local-notifications",
+      "id": "de.appplant.cordova.plugin.local-notification"
+    }
   ],
   "cordovaPlatforms": []
 }
