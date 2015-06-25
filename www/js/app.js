@@ -22,7 +22,7 @@ angular.module('shopper', ['ionic','controller','ngCordova','beacons','posicion'
       }
     })
 
-.run(function($rootScope,$state,$location,$cordovaBatteryStatus,App){
+.run(function($rootScope,$state,$location,$cordovaDialogs,$cordovaBatteryStatus,App){
     $rootScope.$on('App:Exit',function(){
         $location.url("/");
     });
@@ -36,7 +36,18 @@ angular.module('shopper', ['ionic','controller','ngCordova','beacons','posicion'
         console.log('X:Region:Outside detected event:'+event +' args:'+JSON.stringify(args));
     });
     $rootScope.$on('Beacon:Detected',function(event,args){
-        alert(JSON.stringify(args.beacon));
+        App.stopRanging(207);
+        $cordovaDialogs.confirm('Alerta Becon:'+JSON.stringify(args.beacon), 'SuperMall')
+            .then(function(buttonIndex) {
+                switch (buttonIndex){
+                    case 1:
+                        App.startRanging(207);
+                        break;
+                    case 2:
+                        App.stopRanging(207);
+                        break;
+                }
+            });
     });
 
     $rootScope.$on('Location:Ok',function(event,args){

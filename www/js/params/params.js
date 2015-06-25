@@ -4,9 +4,10 @@ angular.module('Params',['Super'])
     var AppAuthor = "VMPS";
     var AppCompany = "Supermio";
     var AppId = "SuperBeacons";
-
     var AppAuthenticated = false;
 
+    var beaconNear = 3;
+    var beaconTope = 3;
     var protAuth = 'http://';
     var protAPI = 'https://';
     var keyAPI='akedowermightfuldsolveri';
@@ -40,6 +41,12 @@ angular.module('Params',['Super'])
         },
         getAppAuthenticated: function(){
             return AppAuthenticated;
+        },
+        getBeaconNear: function(){
+            return beaconNear;
+        },
+        getBeaconTope: function(){
+            return beaconTope;
         },
         getDbName: function(){
             return dbName;

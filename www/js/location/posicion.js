@@ -1,7 +1,7 @@
-angular.module('posicion', [])
-.factory('Posicion',function($filter,$rootScope){
+angular.module('posicion', ['Params'])
+.factory('Posicion',function($filter,Params,$rootScope){
     var status = true;
-    var tope = 5;
+    var tope = Params.getBeaconTope();
     var beacons =[];
 
     function addBeacon(pBeacon){
@@ -12,7 +12,8 @@ angular.module('posicion', [])
             uuid:'',
             rssi:0,
             accuracy:0,
-            cont:0
+            cont:1,
+            avg:0
         };
         beacon.id = pBeacon.id;
         beacon.major=pBeacon.major;
@@ -20,7 +21,7 @@ angular.module('posicion', [])
         beacon.uuid=pBeacon.uuid;
         beacon.rssi=pBeacon.rssi;
         beacon.accuracy=pBeacon.accuracy;
-        beacon.cont = 0;
+        beacon.avg = pBeacon.accuracy;
         beacons.push(beacon);
     }
     function updateBeacon(pBeacon,item,index){
@@ -31,11 +32,13 @@ angular.module('posicion', [])
             uuid:'',
             rssi:0,
             accuracy:0,
-            cont:0
+            cont:1,
+            avg: 0
         };
         /*beacon.id = pBeacon.id; beacon.major= pBeacon.major;beacon.minor= pBeacon.minor; beacon.uuid= pBeacon.uuid; beacon.rssi= pBeacon.rssi;*/
         if (pBeacon.accuracy>0) item.accuracy = item.accuracy + pBeacon.accuracy;
         item.cont = item.cont+1;
+        item.avg = item.accuracy/item.cont;
         beacons.splice(index,1);
         beacons.push(item);
         return detectTope(item);
@@ -45,11 +48,17 @@ angular.module('posicion', [])
     }
     function detectTope(pBeacon){
         if (pBeacon.cont > tope){
-            beacons.sort(function(a, b){return a.accuracy-b.accuracy});
+            beacons.sort(function(a, b){return ( a.avg - b.avg )});
             item = beacons[0];
+            console.log('X0: Los beacons estan así: '+JSON.stringify(beacons));
             resetBeacons();
             status = false;
-            $rootScope.$broadcast('Beacon:Detected',{beacon:item});
+            if (item.avg < Params.getBeaconNear()){
+                $rootScope.$broadcast('Beacon:Detected',{beacon:item});
+            } else {
+                status = true;
+                console.log('X0: Tope detectado pero muy lejos: '+ item.avg+' tope: ' +Params.getBeaconNear());
+            }
             return true;
         } else {
             return false;
@@ -93,7 +102,7 @@ angular.module('posicion', [])
         if (status){
             angular.forEach(pBeacons,function(value,key){
                 console.log('Exit Point 0: index: '+key+' '+JSON.stringify(value));
-                value.id=value.uuid+value.major+value.minor;
+                value.id='beacon_region_zona_'+value.uuid+'_'+value.major+'_'+value.minor;
                 setBeacon(value);
                 console.log('Exit Point 0: Beacons: '+beacons.length+':: ' + +key+' '+JSON.stringify(beacons));
             });
