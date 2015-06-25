@@ -1,5 +1,12 @@
 angular.module('Params',['Super'])
-.factory('params',function(Base64){
+.factory('Params',function(Base64){
+    var AppName = "SuperBeacons";
+    var AppAuthor = "VMPS";
+    var AppCompany = "Supermio";
+    var AppId = "SuperBeacons";
+
+    var AppAuthenticated = false;
+
     var protAuth = 'http://';
     var protAPI = 'https://';
     var keyAPI='akedowermightfuldsolveri';
@@ -7,8 +14,10 @@ angular.module('Params',['Super'])
     var dbServer = 'superdemos.cloudant.com/supershopper';
     var urlAPI = 'supershopper.supermio.com/_all_docs';
     var dbName ='supershopper';
-    var dbTimeOut = '30000';
+    var dbTimeOut = '600000';
     var dbInserts = 0;
+    var dbInit = false;
+    var dbSyncType =  1; //0: mobile2server 1:server2mobile
 
     var posTimeOut = 3000;
     var posHighAcc = false;
@@ -16,9 +25,22 @@ angular.module('Params',['Super'])
 
     var posWatchFreq = 900000;
 
-
-
     return {
+        getAppName: function() {
+            return AppName;
+        },
+        getAppAuthor: function(){
+            return AppAuthor;
+        },
+        getAppCompany: function(){
+            return AppCompany;
+        },
+        getAppId: function(){
+            return AppId;
+        },
+        getAppAuthenticated: function(){
+            return AppAuthenticated;
+        },
         getDbName: function(){
             return dbName;
         },
@@ -31,9 +53,8 @@ angular.module('Params',['Super'])
         getPassAPI: function(){
             return passAPI;
         },
-        getUrlAPI: function(auth){
-            var res = protAuth+urlAPI+'?include_docs=true&key="'+auth.key+'"';
-            console.log('Cadena de autenticación : '+res);
+        getUrlAPI: function(){
+            var res = protAuth+urlAPI+'?include_docs=true&key="';
             return res;
         },
         getAuthData: function(){
@@ -42,8 +63,17 @@ angular.module('Params',['Super'])
         getDbTimeOut: function(){
             return dbTimeOut;
         },
+        getDbInit: function(){
+            return dbInit;
+        },
         getDbInserts: function(){
-            return dbInserts;
+            var res;
+            if (dbSyncType==0){
+                res = dbInserts;
+            } else {
+                res = 1;
+            }
+            return res;
         },
         putDbInserts: function(){
             dbInserts+=1;
@@ -62,6 +92,6 @@ angular.module('Params',['Super'])
         },
         getPosWatchFreq: function(){
             return posWatchFreq;
-        },
+        }
     }
-})
+});

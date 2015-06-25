@@ -1,9 +1,7 @@
 angular.module('user',['Super','Params'])
 .factory('User',function($http,
                           $rootScope,
-                          params,
-                          Super,
-                          Base64){
+                          Super) {
     var currentUser = {
         _id : '',
         user : '',
@@ -15,18 +13,29 @@ angular.module('user',['Super','Params'])
         active : false,
         type : 'user'
     };
-    var User = function(id, pass, name,group,company){
+    var auth = {
+        include_docs: true,
+        key: ''
+    };
+    var request = {
+        url:'',
+        method: 'GET'
+    };
+    function configure(params){
+        request.url = params.url;
+    }
+    var User = function(params, id, pass, name,group,company){
         currentUser._id = 'user_'+id;
         currentUser.user = id;
         currentUser.name = name;
         currentUser.group = group;
         currentUser.company = company;
-        currentUser.created = 000000;
+        currentUser.created = '000000';
         currentUser.type = 'user';
         currentUser.hash = CryptoJS.RIPEMD160("app-"+pass);
+        configure(params);
     };
     User.prototype.get = function(){
-        var self = this;
         return currentUser;
     };
     User.prototype.getUserName = function(){
@@ -37,16 +46,9 @@ angular.module('user',['Super','Params'])
         }
     };
     User.prototype.authenticate = function() {
-        var self = this;
         var authError;
-        var auth ={
-            include_docs: true,
-            key: currentUser.user.toLowerCase()
-        };
-        var request = {
-            url: params.getUrlAPI(auth),
-            method: 'GET'
-        };
+        auth.key= currentUser.user.toLowerCase();
+        request.url = url+'"'+auth.key+'"';
 
         $http(request)
         .success(function(data){
@@ -85,4 +87,4 @@ angular.module('user',['Super','Params'])
         return this;
     };
     return User;
-})
+});

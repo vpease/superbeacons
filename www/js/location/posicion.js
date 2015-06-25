@@ -1,5 +1,5 @@
 angular.module('posicion', [])
-.factory('Ubica',function($filter,$rootScope){
+.factory('Posicion',function($filter,$rootScope){
     var status = true;
     var tope = 5;
     var beacons =[];
@@ -21,11 +21,8 @@ angular.module('posicion', [])
         beacon.rssi=pBeacon.rssi;
         beacon.accuracy=pBeacon.accuracy;
         beacon.cont = 0;
-        console.log('Exit Point 0: not found beacon added: '+JSON.stringify(beacon));
-        console.log('Exit Point 0: not found beacons about to be: '+JSON.stringify(beacons));
         beacons.push(beacon);
-        console.log('Exit Point 0: not found beacons added: '+JSON.stringify(beacons));
-    };
+    }
     function updateBeacon(pBeacon,item,index){
         var beacon = {
             id: '',
@@ -39,27 +36,16 @@ angular.module('posicion', [])
         /*beacon.id = pBeacon.id; beacon.major= pBeacon.major;beacon.minor= pBeacon.minor; beacon.uuid= pBeacon.uuid; beacon.rssi= pBeacon.rssi;*/
         if (pBeacon.accuracy>0) item.accuracy = item.accuracy + pBeacon.accuracy;
         item.cont = item.cont+1;
-        console.log('Exit Point 0: not found beacons Update beacon: '+JSON.stringify(item));
-        console.log('Exit Point 0: not found beacons Update beacons antes: '+JSON.stringify(beacons));
         beacons.splice(index,1);
-        console.log('Exit Point 0: not found beacons Update beacons reducido: '+JSON.stringify(beacons));
         beacons.push(item);
-        if (detectTope(item)){
-            console.log('Exit Point 0: not found beacons Update es tope: '+JSON.stringify(item));
-            return true;
-        } else {
-            console.log('Exit Point 0: not found beacons Update no es tope: '+JSON.stringify(item));
-            console.log('Exit Point 0: not found beacons Update no es tope beacons: '+JSON.stringify(beacons));
-            return false;
-        }
-    };
+        return detectTope(item);
+    }
     function compare(a,b){
         return a.accuracy - b.accuracy;
-    };
+    }
     function detectTope(pBeacon){
         if (pBeacon.cont > tope){
             beacons.sort(function(a, b){return a.accuracy-b.accuracy});
-            console.log('Exit Point 3: '+JSON.stringify(beacons));
             item = beacons[0];
             resetBeacons();
             status = false;
@@ -68,7 +54,7 @@ angular.module('posicion', [])
         } else {
             return false;
         }
-    };
+    }
     function setBeacon(pBeacon){
         console.log('Exit Point 0: ingresando: '+JSON.stringify(pBeacon));
         console.log('Exit Point 0: ingresando Beacons: '+JSON.stringify(beacons));
@@ -89,19 +75,19 @@ angular.module('posicion', [])
             console.log('Exit Point 0: not found 0 beacon: '+JSON.stringify(pBeacon));
             addBeacon(pBeacon);
         }
-    };
+    }
     function resetBeacons(){
         beacons=[];
-    };
-    var Ubica = function(){
     }
-    Ubica.prototype.start = function(){
+    var Posicion = function(){
+    };
+    Posicion.prototype.start = function(){
         status = true;
     };
-    Ubica.prototype.stop = function(){
+    Posicion.prototype.stop = function(){
         status = false;
     };
-    Ubica.prototype.setBeacons = function(pBeacons){
+    Posicion.prototype.setBeacons = function(pBeacons){
         console.log('Exit Point 0: '+JSON.stringify(pBeacons));
         console.log('Exit Point 0 original: '+JSON.stringify(beacons));
         if (status){
@@ -115,5 +101,5 @@ angular.module('posicion', [])
             resetBeacons();
         }
     };
-    return Ubica;
-})
+    return Posicion;
+});

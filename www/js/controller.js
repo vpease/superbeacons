@@ -1,52 +1,19 @@
 angular.module('controller',['ngCordova','services','app','Super'])
-.controller('SplashController',function($ionicPlatform,
+    .controller('SplashController',function($ionicPlatform,
                                          $rootScope,
-                                         $scope,
-                                         $timeout,
-                                         $cordovaGeolocation,
-                                         $cordovaDevice,
-                                         $cordovaBackgroundGeolocation,
-                                         Equipo,
-                                         App,
-                                        Super){
-    $scope.posicion = {
-        lat: '',
-        lon: '',
-        fecha: '',
-        bateria:'',
-        mac: ''
-    };
-    var watch;
-    this.capturando = false;
-    this.butonText = 'Iniciar Captura';
-    this.freq = 30000;
-    this.accion = 'Capturando...';
-    this.mac = '';
+                                         $scope){
 
     $ionicPlatform.ready(function(){
-        Equipo.initData();
-        var platform = ionic.Platform.platform();
-        if (platform  ==="win32" || platform ==="win64" || platform ==="macintel" ){
-            Equipo.setMac('01010101010');
-        } else {
-            window.MacAddress.getMacAddress(
-            function(macAddress) {
-                Equipo.setMac(macAddress);
-            },function(fail) {
-                Equipo.setMac($cordovaDevice.getUUID());
-            });
-        };
-
         $scope.onBatteryStatus = function(result) {
             //data.init();
             //data.replicate();
-            $scope.posicion.mac = Equipo.getMac();
-            console.log('El nivel es: ' + result.level);
-            console.log('El id es: '+Equipo.getMac());
-            Equipo.setBateria(result.level);
-            $scope.posicion.bateria = result.level;
-            Equipo.replicate(this.mac);
-        }
+            //$scope.posicion.mac = Equipo.getMac();
+            //console.log('El nivel es: ' + result.level);
+            //console.log('El id es: '+Equipo.getMac());
+            //Equipo.setBateria(result.level);
+            //$scope.posicion.bateria = result.level;
+            //Equipo.replicate(this.mac);
+        };
 
         if (!$rootScope.batteryEvtAttached) {
         // prevent from registering multiple times
@@ -70,26 +37,30 @@ angular.module('controller',['ngCordova','services','app','Super'])
     };
 })
 .controller('MainController',function($scope,
-                                       $cordovaDialogs,
-                                       App,
-                                       papers){
-    $scope.papers = papers;
-    $scope.numColumns = 4;
-    $scope.rows = [];
-    $scope.cols = [];
-    $scope.rows.length = Math.ceil($scope.papers.length / $scope.numColumns);
-    $scope.cols.length = $scope.numColumns;
-    $scope.click = function(id){
-        App.saveClick(id);
-        $cordovaDialogs.beep();
+                                      $cordovaDialogs,
+                                      $state,
+                                      App,
+                                      mall){
+    $scope.mall = mall.rows;
+    if ($scope.mall.length>0){
+        App.startBeacon($scope.mall[0].doc.regions[0].region);
+        App.startMonitoring();
+        console.log('Monitoreo de Beacons iniciado');
+    }
+    $scope.Session = App.get();
+    $scope.entrarMall = function(){
+        $state.go('mall',{mall:$scope.mall[0].doc.regions[0].region});
     };
     $scope.salir = function(){
         App.salir();
     };
-
     $scope.$on('db:uptodate',function(event,args){
         App.setSyncStatus('Ok:');
         $scope.syncStatus = App.getSyncStatus(args.msg);
         $scope.$apply();
     });
 })
+.controller('MallController',function($scope,App,mallId){
+        $scope.mall = mallId;
+        App.startRanging(207);
+    });

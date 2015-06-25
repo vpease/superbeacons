@@ -1,14 +1,14 @@
 angular.module('location',['ngCordova','Super','Params'])
-.factory('Location',function($cordovaGeolocation,params,Super){
+.factory('Location',function($cordovaGeolocation,Params,Super){
     var currentPosOptions = {
-        timeout : params.getPosTimeOut(),
-        enableHighAccuracy : params.getPosHighAcc(),
-        maximumAge: params.getPosMaxAge()
+        timeout : Params.getPosTimeOut(),
+        enableHighAccuracy : Params.getPosHighAcc(),
+        maximumAge: Params.getPosMaxAge()
     }
     var currentWatchOptions = {
-        frequency : params.getPosWatchFreq(),
-        timeout : params.getPosTimeOut(),
-        enableHighAccuracy : params.getPosHighAcc()
+        frequency : Params.getPosWatchFreq(),
+        timeout : Params.getPosTimeOut(),
+        enableHighAccuracy : Params.getPosHighAcc()
     }
     var currentLocation = {
         _id : '',
@@ -36,9 +36,11 @@ angular.module('location',['ngCordova','Super','Params'])
         currentLocation.ts = position.coords.timestamp;
         status = true;
     };
-    Location.prototype.getCurrent = function() {
-        var self = this;
+    Location.prototype.get = function(){
         return currentLocation;
+    };
+    Location.prototype.getCurrent = function() {
+        return this;
     };
     Location.prototype.getNewPosition = function() {
         return $cordovaGeolocation

@@ -1,18 +1,13 @@
-<ion-view view-title="Regs: {{syncStatus}}">
+<ion-view view-title="Menu" class="welcome">
     <ion-nav-buttons side="primary">
       <button class="button button-icon icon ion-android-exit " ng-click="salir()"> Salir
       </button>
     </ion-nav-buttons>
-    <ion-content has-header="true">
-        <div class="row" ng-repeat="paper in papers" ng-if="$index % 3 ==0">
-            <div class="col" ng-repeat="paper in papers.slice($index,$index+3)">
-               <button class="button button-block button-large button-royal"
-                       ng-click='click(paper._id)'>
-                   <img class="avatar"
-                        ng-src='img/papers/{{paper.avatar}}'
-                        alt={{paper.nombre}}>
-                </button>
-            </div>
+    <ion-content has-header="false">
+        <div class="center">
+            <button class="button button-royal"
+                    ng-click="entrarMall()"><img src="img/logo.jpg"></button>
         </div>
+
     </ion-content>
 </ion-view>

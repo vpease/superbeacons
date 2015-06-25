@@ -1,19 +1,12 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-angular.module('shopper', ['ionic','controller','app'])
+angular.module('shopper', ['ionic','controller','ngCordova','beacons','posicion','app'])
 .run(function($ionicPlatform,App) {
   $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
     if(window.cordova && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
     }
     if(window.StatusBar) {
       StatusBar.styleDefault();
-    };
+    }
     App.initApp();
   });
 })
@@ -29,46 +22,155 @@ angular.module('shopper', ['ionic','controller','app'])
       }
     })
 
+.run(function($rootScope,$state,$location,$cordovaBatteryStatus,App){
+    $rootScope.$on('App:Exit',function(){
+        $location.url("/");
+    });
+
+    $rootScope.$on('Region:Inside',function(event,args){
+        $state.go("mall",{mall:args.uuid});
+        console.log('X:Region:Inside detected');
+    });
+    $rootScope.$on('Region:Outside',function(event,args){
+        //$state.go("menu",{mall:args.uuid});
+        console.log('X:Region:Outside detected event:'+event +' args:'+JSON.stringify(args));
+    });
+    $rootScope.$on('Beacon:Detected',function(event,args){
+        alert(JSON.stringify(args.beacon));
+    });
+
+    $rootScope.$on('Location:Ok',function(event,args){
+        console.log('Location: Ok');
+        App.getPosition(args.pos);
+        App.setLocOk(true);
+        console.log('Posición Ok sin problemas');
+        if (App.getInitStatus(true)){
+            if (App.Authenticated())
+                $location.url("/login/Bienvenido");
+        }
+      });
+
+    $rootScope.$on('Location:Ko',function(event,args){
+        console.log('Location: Ko');
+        App.retryLocation();
+        if (args.retries===0){
+          console.log('Posición Ko con problemas');
+          $location.url("/login/Bienvenido");
+        }
+      });
+
+    $rootScope.$on('auth:ok',function(event,args){
+        App.setAuthOk(true);
+        App.replicate(args.user);
+        console.log('Auth ok: '+args.message);
+        if (App.getInitStatus(true)) {
+            App.setBoot();
+            $location.url("/menu/");
+        }
+      });
+
+    $rootScope.$on('auth:ko',function(event,args){
+        console.log('Auth ko: '+args.message);
+        $location.url("/login/"+args.message);
+      });
+    $rootScope.$on('$cordovaBatteryStatus:status', function (result) {
+        App.setBateria(result.level);
+    });
+    $rootScope.$on('$cordovaBatteryStatus:critical', function (result) {
+        App.setBateria(result.level);
+    });
+    $rootScope.$on('$cordovaBatteryStatus:low', function (result) {
+        App.setBateria(result.level);
+    });
+
+    $rootScope.$on('db:init',function(event,args){
+      });
+
+    $rootScope.$on('db:uptodate',function(event,args){
+        console.log('Base de datos Ok: event:'+event+' args:'+JSON.stringify(args));
+        App.setDataOk(true);
+        if (App.getInitStatus(true)){
+            App.setBoot();
+            $location.url("/menu/");
+        }
+      });
+    })
 .config(function($stateProvider, $urlRouterProvider) {
-      $stateProvider
-          .state('splash', {
-            url: "/",
-            views: {
+  $stateProvider
+      .state('splash', {
+          url: "/",
+          views: {
               "home":{
-                templateUrl: "templates/splash.html",
-                controller: "SplashController as splash"
+                  templateUrl: "templates/splash.html",
+                  controller: "SplashController as splash"
               }
-            }
-          })
-          .state('login',{
-            url:"/login/:msg",
-            views: {
+          },
+          onEnter:function(){
+              console.log('Estoy entrando al estado splash');
+          },
+          onExit:function(){
+              console.log('Estoy saliendo al estado splash');
+          }
+      })
+      .state('login',{
+          url:"/login/:msg",
+          views: {
               "home":{
-                templateUrl: "templates/login.html",
-                controller: "LoginController as login"
+                  templateUrl: "templates/login.html",
+                  controller: "LoginController as login"
               }
-            },
-            resolve: {
+          },
+          resolve: {
               msg: function($stateParams){
-                return $stateParams.msg;
+                  return $stateParams.msg;
               }
+          },
+          onEnter:function(){
+              console.log('Estoy entrando al estado login');
+          },
+          onExit:function(){
+              console.log('Estoy saliendo al estado login');
             }
-          })
-          .state('main',{
-            url:"/menu/",
-            views: {
+      })
+      .state('menu',{
+          url:"/menu/",
+          views: {
               "home":{
-                templateUrl: "templates/main.html",
-                controller: "MainController as main"
+                  templateUrl: "templates/main.html",
+                  controller: "MainController as main"
               }
-            },
-            resolve:{
-              papers: function(data){
-                res = data.getPapers();
-                return res;
+          },
+          resolve: {
+              mall: function(App){
+                  return App.getMall();
               }
-            }
-          })
-      // if none of the above states are matched, use this as the fallback
+          },
+          onEnter:function(){
+              console.log('X:Estoy entrando al estado menu');
+          },
+          onExit:function(){
+              console.log('X:Estoy saliendo al estado menu');
+          }
+      })
+      .state('mall',{
+          url:"/mall/:mallId",
+          views: {
+              "home":{
+                  templateUrl: "templates/mall.html",
+                  controller: "MallController as mall"
+              }
+          },
+          resolve:{
+              mallId:function($stateParams){
+                  return $stateParams.mallId;
+              }
+          },
+          onEnter:function(){
+              console.log('X:Estoy entrando al estado mall');
+          },
+          onExit:function(){
+              console.log('X:Estoy saliendo al estado mall');
+          }
+      });
       $urlRouterProvider.otherwise('/');
     });

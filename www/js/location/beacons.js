@@ -1,9 +1,10 @@
-angular.module('beacons',[])
-.factory('beacons',function($rootScope){
+angular.module('beacons',['posicion'])
+.factory('Beacon',function($rootScope,Posicion){
+    var pos;
     var delegate;
     var mall = {
         uuid:'',
-        id: 'SuperMall',
+        identifier: 'SuperMall',
         typeName: 'BeaconRegion'
     };
     var tienda ={
@@ -14,29 +15,31 @@ angular.module('beacons',[])
     };
     var uuid;
     var monRegions;
-    var beaconRegion;
+    var mallRegion;
+    var storeRegion;
     function getMonitoredRegions(pRegion){
         cordova.plugins.locationManager.getMonitoredRegions()
         .then(function(monitoredRegions){
             monRegions = monitoredRegions;
             $rootScope.$broadcast('Beacons:MonitorOn',{regs:monRegions});
         })
-    };
+    }
     function getMallRegion(){
-        mall.uuid = uuid;
-        var beaconRegion = cordova.plugins.locationManager.Regions.fromJson(mall);
-        return beaconRegion;
-    };
-
+        console.log('beacons.js: mall es:'+JSON.stringify(mall));
+        mallRegion = cordova.plugins.locationManager.Regions.fromJson(mall);
+    }
     function getStoreRegion(major){
         tienda.uuid = uuid;
         tienda.major= major;
-        var beaconRegion = cordova.plugins.locationManager.Regions.fromJson(tienda);
-        return beaconRegion;
-    };
-
-    var beacon = function(pUUID){
-        mall.uuid=pUUID;
+        storeRegion=cordova.plugins.locationManager.Regions.fromJson(tienda);
+    }
+    var Beacon = function(pUUID){
+        pos = new Posicion();
+        var temp = pUUID.indexOf('region_');
+        if (temp>=0)
+        uuid = pUUID.substring(7);
+        mall.uuid=uuid;
+        tienda.uuid=uuid;
         delegate = new cordova.plugins.locationManager.Delegate();
         delegate.didStartMonitoringForRegion = function(pluginResult){
             getMonitoredRegions();
@@ -44,12 +47,12 @@ angular.module('beacons',[])
         };
         delegate.didRangeBeaconsInRegion = function(pluginResult){
             pluginResult.id= new Date().getTime();
+            pos.setBeacons(pluginResult.beacons);
             $rootScope.$broadcast('Beacons:Ranged',{beacons:pluginResult.beacons})
         };
         delegate.didDetermineStateForRegion = function(pluginResult){
             switch(pluginResult.state){
                 case "CLRegionStateInside":
-                    major = pluginResult.
                     $rootScope.$broadcast('Region:Inside',{region:pluginResult.region});
                     break;
                 case "CLRegionStateOutside":
@@ -59,9 +62,11 @@ angular.module('beacons',[])
         };
         cordova.plugins.locationManager.requestAlwaysAuthorization();
         cordova.plugins.locationManager.setDelegate(delegate);
+        console.log('beacon.js: Beacon iniciado')
     };
-    beacon.prototype.startMonitoring = function(){
-        cordova.plugins.locationManager.startMonitoringForRegion(getMallRegion());
+    Beacon.prototype.startMonitoring = function(){
+        getMallRegion();
+        cordova.plugins.locationManager.startMonitoringForRegion(mallRegion)
         .fail(function(error){
             console.log('Error al iniciar el monitoreo:'+error);
         })
@@ -69,8 +74,8 @@ angular.module('beacons',[])
             console.log('Ok al iniciar el monitoreo');
         });
     };
-    beacon.prototype.stopMonitoring = function(){
-        cordova.plugins.locationManager.stopMonitoringForRegion(beaconRegion)
+    Beacon.prototype.stopMonitoring = function(){
+        cordova.plugins.locationManager.stopMonitoringForRegion(mallRegion)
         .fail(function(error){
             console.log('Error al terminar el monitoreo:'+error);
         })
@@ -78,18 +83,22 @@ angular.module('beacons',[])
             console.log('Ok al terminar el monitoreo');
         });
     };
-    beacon.prototype.startRanging = function(major){
-        cordova.plugins.locationManager.startRangingBeaconsInRegion(getStoreRegion(major))
+    Beacon.prototype.startRanging = function(major){
+        pos.start();
+        getStoreRegion(major);
+        cordova.plugins.locationManager.startRangingBeaconsInRegion(storeRegion)
         .fail(function(error){
             console.log('Error al iniciar Ranging: '+error);
         })
         .done();
     };
-    beacon.prototype.stopRanging = function(beaconRegion){
-        cordova.plugins.locationManager.stopRangingBeaconsInRegion(beaconRegion)
+    Beacon.prototype.stopRanging = function(){
+        pos.stop();
+        cordova.plugins.locationManager.stopRangingBeaconsInRegion(storeRegion)
         .fail(function(error){
             console.log('Error al terminar el ranging: '+error);
         })
         .done();
-    }
-})
+    };
+        return Beacon;
+});
