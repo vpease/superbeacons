@@ -35,5 +35,29 @@ angular.module('data',['db'])
                 });
             return dfd.promise;
         };
+        data.prototype.getBanner = function(beaconId){
+            var dfd = $q.defer();
+            console.log('X1: beacon es:'+beaconId);
+            DB.getView('supershopper/banners',{startkey:[beaconId],endkey:[beaconId,{}],include_docs:true})
+                .then(function(result){
+                    console.log('Recuperando banner');
+                    dfd.resolve(result);
+                },function(error){
+                    console.log('Error en getBanner: '+error);
+                });
+            return dfd.promise;
+        };
+        data.prototype.getAttach = function(docId,attach) {
+            var dfd = $q.defer();
+            DB.getAttach(docId, attach)
+                .then(function (result) {
+                    url = window.URL || window.webkitURL;
+                    res = url.createObjectURL(result);
+                    dfd.resolve(res);
+                }, function (error) {
+                    console.log('Error cargando blob:' + error);
+                });
+            return dfd.promise;
+        };
         return data;
     });

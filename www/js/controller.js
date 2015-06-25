@@ -3,7 +3,7 @@ angular.module('controller',['ngCordova','services','app','Super'])
                                          $rootScope,
                                          $scope){
 
-    $ionicPlatform.ready(function(){
+    /*$ionicPlatform.ready(function(){
         $scope.onBatteryStatus = function(result) {
             //data.init();
             //data.replicate();
@@ -24,7 +24,7 @@ angular.module('controller',['ngCordova','services','app','Super'])
              $rootScope.batteryEvtAttached = true;
          }
         }
-    );
+    );*/
 })
 .controller('LoginController',function($ionicHistory,$scope,App,msg){
     this.msg = msg;
@@ -35,6 +35,9 @@ angular.module('controller',['ngCordova','services','app','Super'])
         App.authenticate(this.user,this.pass);
         this.pass='';
     };
+        $scope.salir = function(){
+            ionic.Platform.exitApp()
+        };
 })
 .controller('MainController',function($scope,
                                       $cordovaDialogs,
@@ -52,7 +55,7 @@ angular.module('controller',['ngCordova','services','app','Super'])
         $state.go('mall',{mall:$scope.mall[0].doc.regions[0].region});
     };
     $scope.salir = function(){
-        App.salir();
+        ionic.Platform.exitApp()
     };
     $scope.$on('db:uptodate',function(event,args){
         App.setSyncStatus('Ok:');
@@ -63,4 +66,7 @@ angular.module('controller',['ngCordova','services','app','Super'])
 .controller('MallController',function($scope,App,mallId){
         $scope.mall = mallId;
         App.startRanging(207);
+        $scope.salir = function(){
+            ionic.Platform.exitApp()
+        };
     });

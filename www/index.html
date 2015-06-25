@@ -37,4 +37,17 @@
   <ion-nav-bar class="bar-royal"> SuperMall</ion-nav-bar>
   <ion-nav-view name="home"></ion-nav-view>
   </body>
+  <script id="modal.html" type="text/ng-template">
+    <div class="modal">
+      <header class="bar bar-header bar-royal">
+        <h1 class="title">{{texto}}</h1>
+        <div class="button button-royal" ng-click="modal.hide()"><span class="icon ion-close"></span></div>
+      </header>
+      <content has-header="true" padding="true">
+        <ion-scroll style="width:100%;height:100%">
+          <img style="width:100%;height:auto" ng-src="{{banner}}">
+        </ion-scroll>
+      </content>
+    </div>
+  </script>
 </html>

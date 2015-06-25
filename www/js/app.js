@@ -22,7 +22,7 @@ angular.module('shopper', ['ionic','controller','ngCordova','beacons','posicion'
       }
     })
 
-.run(function($rootScope,$state,$location,$cordovaDialogs,$cordovaBatteryStatus,App){
+.run(function($rootScope,$state,$location,$ionicModal,$cordovaDialogs,$cordovaBatteryStatus,App){
     $rootScope.$on('App:Exit',function(){
         $location.url("/");
     });
@@ -36,8 +36,37 @@ angular.module('shopper', ['ionic','controller','ngCordova','beacons','posicion'
         console.log('X:Region:Outside detected event:'+event +' args:'+JSON.stringify(args));
     });
     $rootScope.$on('Beacon:Detected',function(event,args){
+        console.log('X1: args:'+JSON.stringify(args));
         App.stopRanging(207);
-        $cordovaDialogs.confirm('Alerta Becon:'+JSON.stringify(args.beacon), 'SuperMall')
+        $ionicModal.fromTemplateUrl('modal.html', function($ionicModal) {
+            $rootScope.modal = $ionicModal;
+        }, {
+            // Use our scope for the scope of the modal to keep it simple
+            scope: $rootScope,
+            // The animation we want to use for the modal entrance
+            animation: 'slide-in-up'
+        });
+        $rootScope.closeModal = function() {
+            $rootScope.modal.hide();
+        };
+        $rootScope.$on('modal.hidden', function() {
+            App.startRanging(207);
+        });
+        App.getBanner(args.beacon.id)
+            .then(function(result){
+                banner = result.rows[0];
+                console.log('X1: '+JSON.stringify(result));
+                $rootScope.texto = banner.doc.texto;
+                App.getAttach(banner.value._id,Object.keys(banner.doc._attachments)[0])
+                    .then(function(result){
+                        $rootScope.banner = result;
+                        $rootScope.modal.show();
+                    });
+            },function(error){
+                console.log('problemas con el banner');
+            });
+        //$cordovaDialogs.confirm('Alerta Becon:'+JSON.stringify(args.beacon), 'SuperMall')
+        /*$cordovaDialogs.confirm('Alerta Becon:'+JSON.stringify(args.beacon), 'SuperMall')
             .then(function(buttonIndex) {
                 switch (buttonIndex){
                     case 1:
@@ -47,7 +76,7 @@ angular.module('shopper', ['ionic','controller','ngCordova','beacons','posicion'
                         App.stopRanging(207);
                         break;
                 }
-            });
+            });*/
     });
 
     $rootScope.$on('Location:Ok',function(event,args){

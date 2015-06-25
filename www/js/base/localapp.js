@@ -119,24 +119,16 @@ angular.module('app',['session','data','Params','beacons','Super'])
         },
 
         getDB: function(key){
-            var dfd = $q.defer();
-            data.get(key)
-                .then(function(result){
-                    dfd.resolve(result);
-                },function(error){
-                    console.log('localapp: error en get: '+error);
-                });
-            return dfd.promise;
+            return data.getDB();
         },
         getMall: function(){
-            var dfd = $q.defer();
-            data.getMall()
-                .then(function(result){
-                    dfd.resolve(result);
-                },function(error){
-                    console.log('localapp: error en get: '+error);
-                });
-            return dfd.promise;
+            return data.getMall();
+        },
+        getBanner: function(beaconId){
+            return data.getBanner(beaconId);
+        },
+        getAttach: function(docId,attach){
+            return data.getAttach(docId,attach);
         },
         salir : function(){
             this.initApp();

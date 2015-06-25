@@ -102,7 +102,7 @@ angular.module('posicion', ['Params'])
         if (status){
             angular.forEach(pBeacons,function(value,key){
                 console.log('Exit Point 0: index: '+key+' '+JSON.stringify(value));
-                value.id='beacon_region_zona_'+value.uuid+'_'+value.major+'_'+value.minor;
+                value.id='beacon_region_zona_'+value.uuid.toUpperCase()+'_'+value.major+'_'+value.minor;
                 setBeacon(value);
                 console.log('Exit Point 0: Beacons: '+beacons.length+':: ' + +key+' '+JSON.stringify(beacons));
             });
