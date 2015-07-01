@@ -41,11 +41,34 @@
     <div class="modal">
       <header class="bar bar-header bar-royal">
         <h1 class="title">{{texto}}</h1>
-        <div class="button button-royal" ng-click="modal.hide()"><span class="icon ion-close"></span></div>
+        <div class="button button-royal" ng-click="modal.hide()">
+          <span class="icon ion-close"></span>
+        </div>
       </header>
-      <content has-header="true" padding="true">
-        <ion-scroll style="width:100%;height:100%">
-          <img style="width:100%;height:auto" ng-src="{{banner}}">
+      <content has-header="true">
+        <ion-scroll>
+        <div class="card">
+          <div class="item-divider">
+            {{texto}}
+          </div>
+          <div class="item-body">
+            <img style="width:100%;height:auto" ng-src="{{banner}}">
+          </div>
+          <div class="item tabs tabs-secondary tabs-icon-left">
+            <a class="tab-item" href="#">
+              <i class="icon ion-thumbsup"></i>
+              Like
+            </a>
+            <a class="tab-item" href="#">
+              <i class="icon ion-chatbox"></i>
+              Comment
+            </a>
+            <a class="tab-item" href="#">
+              <i class="icon ion-share"></i>
+              Share
+            </a>
+          </div>
+        </div>
         </ion-scroll>
       </content>
     </div>

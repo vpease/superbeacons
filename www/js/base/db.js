@@ -96,11 +96,11 @@ angular.module('db',['Params'])
                     }).on('complete',function(info){
                         var timeOut = Params.getDbTimeOut();
                         console.log('Sync data complete.Regreso en : '+timeOut);
-                        $rootScope.$broadcast('db:uptodate',{msg:'Sync Ok'});
                         $timeout(function(){
                             console.log('sync nuevamente');
                             self.replicate();
                         },timeOut);
+                        $rootScope.$broadcast('db:uptodate',{msg:'Sync Ok'});
                     }).on('uptodate',function(info){
                         console.log('Actualizado datos'+JSON.stringify(info));
                         //$rootScope.$broadcast('db:uptodate');
@@ -110,11 +110,11 @@ angular.module('db',['Params'])
             } else {
                 var timeOut = Params.getDbTimeOut();
                 console.log('Nada que sincronizar. Regreso en: '+timeOut);
-                $rootScope.$broadcast('db:uptodate',{msg:'Sync Not Needed'});
                 $timeout(function(){
                     console.log('sync nuevamente');
                     self.replicate();
                 },timeOut);
+                $rootScope.$broadcast('db:uptodate',{msg:'Sync Not Needed'});
             }
         };
         self.getView = function(view,options){

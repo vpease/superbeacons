@@ -28,6 +28,7 @@ angular.module('shopper', ['ionic','controller','ngCordova','beacons','posicion'
     });
 
     $rootScope.$on('Region:Inside',function(event,args){
+        App.stopMonitoring();
         $state.go("mall",{mall:args.uuid});
         console.log('X:Region:Inside detected');
     });
@@ -41,9 +42,7 @@ angular.module('shopper', ['ionic','controller','ngCordova','beacons','posicion'
         $ionicModal.fromTemplateUrl('modal.html', function($ionicModal) {
             $rootScope.modal = $ionicModal;
         }, {
-            // Use our scope for the scope of the modal to keep it simple
             scope: $rootScope,
-            // The animation we want to use for the modal entrance
             animation: 'slide-in-up'
         });
         $rootScope.closeModal = function() {
@@ -65,25 +64,13 @@ angular.module('shopper', ['ionic','controller','ngCordova','beacons','posicion'
             },function(error){
                 console.log('problemas con el banner');
             });
-        //$cordovaDialogs.confirm('Alerta Becon:'+JSON.stringify(args.beacon), 'SuperMall')
-        /*$cordovaDialogs.confirm('Alerta Becon:'+JSON.stringify(args.beacon), 'SuperMall')
-            .then(function(buttonIndex) {
-                switch (buttonIndex){
-                    case 1:
-                        App.startRanging(207);
-                        break;
-                    case 2:
-                        App.stopRanging(207);
-                        break;
-                }
-            });*/
     });
 
     $rootScope.$on('Location:Ok',function(event,args){
         console.log('Location: Ok');
         App.getPosition(args.pos);
         App.setLocOk(true);
-        console.log('Posición Ok sin problemas');
+        console.log('Posiciï¿½n Ok sin problemas');
         if (App.getInitStatus(true)){
             if (App.Authenticated())
                 $location.url("/login/Bienvenido");
@@ -94,7 +81,7 @@ angular.module('shopper', ['ionic','controller','ngCordova','beacons','posicion'
         console.log('Location: Ko');
         App.retryLocation();
         if (args.retries===0){
-          console.log('Posición Ko con problemas');
+          console.log('Posiciï¿½n Ko con problemas');
           $location.url("/login/Bienvenido");
         }
       });
@@ -127,7 +114,7 @@ angular.module('shopper', ['ionic','controller','ngCordova','beacons','posicion'
       });
 
     $rootScope.$on('db:uptodate',function(event,args){
-        console.log('Base de datos Ok: event:'+event+' args:'+JSON.stringify(args));
+        console.log('Base de datos Ok: event:'+JSON.stringify(event)+' args:'+JSON.stringify(args));
         App.setDataOk(true);
         if (App.getInitStatus(true)){
             App.setBoot();

@@ -24,7 +24,7 @@ angular.module('session',['user',
     function getLocation(retry) {
         retries = retry;
         var temp = new Location();
-        $rootScope.$broadcast('Location:Search');
+        //$rootScope.$broadcast('Location:Search');
         temp.getNewPosition().then(function(position){
             temp.setPosition(position);
             status = 'Valido';

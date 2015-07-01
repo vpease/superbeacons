@@ -37,8 +37,10 @@ angular.module('posicion', ['Params'])
         };
         /*beacon.id = pBeacon.id; beacon.major= pBeacon.major;beacon.minor= pBeacon.minor; beacon.uuid= pBeacon.uuid; beacon.rssi= pBeacon.rssi;*/
         if (pBeacon.accuracy>0) item.accuracy = item.accuracy + pBeacon.accuracy;
+        else item.accuraccy = item - pBeacon.accuracy;
         item.cont = item.cont+1;
-        item.avg = item.accuracy/item.cont;
+        if (item.accuracy>0) item.avg = item.accuracy/item.cont;
+	else { item.avg = (-1)*item.accuracy/item.cont; }
         beacons.splice(index,1);
         beacons.push(item);
         return detectTope(item);
@@ -50,7 +52,7 @@ angular.module('posicion', ['Params'])
         if (pBeacon.cont > tope){
             beacons.sort(function(a, b){return ( a.avg - b.avg )});
             item = beacons[0];
-            console.log('X0: Los beacons estan así: '+JSON.stringify(beacons));
+            console.log('X0: Los beacons estan asï¿½: '+JSON.stringify(beacons));
             resetBeacons();
             status = false;
             if (item.avg < Params.getBeaconNear()){

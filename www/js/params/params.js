@@ -8,6 +8,7 @@ angular.module('Params',['Super'])
 
     var beaconNear = 3;
     var beaconTope = 3;
+         
     var protAuth = 'http://';
     var protAPI = 'https://';
     var keyAPI='akedowermightfuldsolveri';
@@ -15,7 +16,7 @@ angular.module('Params',['Super'])
     var dbServer = 'superdemos.cloudant.com/supershopper';
     var urlAPI = 'supershopper.supermio.com/_all_docs';
     var dbName ='supershopper';
-    var dbTimeOut = '600000';
+    var dbTimeOut = '60000';
     var dbInserts = 0;
     var dbInit = false;
     var dbSyncType =  1; //0: mobile2server 1:server2mobile
